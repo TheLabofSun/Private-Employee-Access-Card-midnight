@@ -24,7 +24,7 @@ jobs:
           node-version: '22.x'
 
       - name: Install Vitest test runner
-        run: npm install --save-dev vitest typescript
+        run: npm install --no-save vitest@latest typescript@5.6.3
 
       - name: Run unit tests
         run: npx vitest run --reporter=verbose
@@ -64,18 +64,17 @@ jobs:
         run: |
           echo "=== Compact Contract Source (first 25 lines) ==="
           head -25 contracts/private-employee-access-card.compact
-          echo ""
-          echo "=== Available ZK Circuit Keys ==="
-          ls contracts/managed/private-employee-access-card/keys/ 2>/dev/null \
-            && echo "ZK prover/verifier keys present" \
-            || echo "No keys directory found"
 
   # ─────────────────────────────────────────────────────────
-  # Job 3: Build the React + Vite frontend
+  # Job 3: Build & Publish Production Deployment Environment
   # ─────────────────────────────────────────────────────────
   build-frontend:
-    name: Build Frontend
+    name: Build Frontend & Publish Deployment
     runs-on: ubuntu-latest
+
+    environment:
+      name: Production
+      url: https://leafy-chaja-e5b9d4.netlify.app/
 
     steps:
       - name: Checkout repository
@@ -88,11 +87,11 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build React frontend
         working-directory: frontend
-        run: npm run build
+        run: npx vite build
 
       - name: Verify build output
         run: |
