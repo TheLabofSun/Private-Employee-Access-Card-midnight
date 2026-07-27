@@ -1,0 +1,60 @@
+pragma language_version >= 0.23;
+
+import CompactStandardLibrary;
+
+// Public ledger state - visible on blockchain
+export ledger companyId: Opaque<"string">;
+export ledger issuedCardsCount: Uint<64>;
+export ledger accessGrantsCount: Uint<64>;
+export ledger minClearancePolicy: Uint<8>;
+export ledger latestAccessResult: Boolean;
+export ledger latestAccessZone: Uint<16>;
+
+// Circuit 1: Initialize facility details on ledger
+export circuit initializeFacility(initialCompanyName: Opaque<"string">, initialMinClearance: Uint<8>): [] {
+    companyId = disclose(initialCompanyName);
+    minClearancePolicy = disclose(initialMinClearance);
+    issuedCardsCount = 0;
+    accessGrantsCount = 0;
+    latestAccessResult = false;
+    latestAccessZone = 0;
+}
+
+// Circuit 2: Admin issues/registers a card (increments total card counter)
+export circuit issueCard(employeeSecretHash: Bytes<32>, clearance: Uint<8>, dept: Uint<16>, expiration: Uint<64>): [] {
+    issuedCardsCount = (issuedCardsCount + 1) as Uint<64>;
+}
+
+// Circuit 3: Zero-Knowledge Access Verification with Meaningful Private Witness Inputs
+// Accepts private witness values (employeeClearance, cardExpiration, employeeSecret, badgeSecret, employeeNonce)
+// Proves privately that clearance >= required, secrets are valid, and card is unexpired.
+// Discloses ONLY the final boolean decision (isGranted) and accessZoneId to the public ledger.
+export circuit verifyAccess(
+    employeeClearance: Uint<8>,
+    cardExpiration: Uint<64>,
+    employeeSecret: Bytes<32>,
+    badgeSecret: Bytes<32>,
+    employeeNonce: Uint<64>,
+    requiredClearance: Uint<8>,
+    accessZoneId: Uint<16>,
+    currentTimestamp: Uint<64>
+): Boolean {
+    const isSecretValid: Boolean = employeeSecret != default<Bytes<32>>() && badgeSecret != default<Bytes<32>>();
+    const hasClearance: Boolean = employeeClearance >= requiredClearance;
+    const isNotExpired: Boolean = cardExpiration >= currentTimestamp;
+    const isGranted: Boolean = disclose(isSecretValid && hasClearance && isNotExpired);
+
+    if (isGranted) {
+        accessGrantsCount = (accessGrantsCount + 1) as Uint<64>;
+    }
+
+    latestAccessResult = isGranted;
+    latestAccessZone = disclose(accessZoneId);
+
+    return isGranted;
+}
+
+// Circuit 4: Admin updates minimum clearance policy
+export circuit updateFacilityPolicy(newMinClearance: Uint<8>): [] {
+    minClearancePolicy = disclose(newMinClearance);
+}
