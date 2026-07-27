@@ -10,10 +10,11 @@ permissions:
   contents: read
   deployments: write
   statuses: write
+  actions: read
 
 jobs:
   # ─────────────────────────────────────────────────────────
-  # Job 1: Run Vitest unit tests (pure TS logic, no blockchain deps)
+  # Job 1: Run Vitest unit tests
   # ─────────────────────────────────────────────────────────
   test:
     name: Unit Tests
@@ -35,7 +36,7 @@ jobs:
         run: npx vitest run --reporter=verbose
 
   # ─────────────────────────────────────────────────────────
-  # Job 2: Verify Compact contract source + compiled artifacts
+  # Job 2: Verify Compact contract source & ZK circuit artifacts
   # ─────────────────────────────────────────────────────────
   verify-contract:
     name: Verify Compact Contract
@@ -81,6 +82,7 @@ jobs:
       contents: read
       deployments: write
       statuses: write
+      actions: read
 
     steps:
       - name: Checkout repository

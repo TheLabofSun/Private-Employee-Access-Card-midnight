@@ -2,12 +2,13 @@
   "name": "private-employee-access-card",
   "version": "1.0.0",
   "type": "module",
-  "description": "A Midnight Network application created with create-mn-app",
-  "author": "",
+  "description": "Private Employee Access Card (CyberAccess ZK) - Midnight Confidential Credentials dApp",
+  "author": "Surjo Ghosh <ghoshsurjo584@gmail.com>",
   "license": "MIT",
   "scripts": {
     "compile": "compact compile contracts/private-employee-access-card.compact contracts/managed/private-employee-access-card",
-    "build": "npx tsc --noEmit || true",
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "lint": "cd frontend && npm run build",
     "setup": "npx tsx src/setup.ts",
     "deploy": "npx tsx src/deploy.ts",
     "cli": "npx tsx src/cli.ts",
@@ -38,8 +39,8 @@
     "@types/node": "^22.0.0",
     "@types/ws": "^8.18.1",
     "tsx": "^4.23.1",
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
   },
   "engines": {
     "node": ">=22.0.0"
