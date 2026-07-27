@@ -1,11 +1,13 @@
 # Private Employee Access Card (CyberAccess ZK)
 
+[![Live Web Application](https://img.shields.io/badge/Netlify_App-Successfully_Deployed-10b981?style=for-the-badge&logo=netlify)](https://leafy-chaja-e5b9d4.netlify.app/)
 [![CI Pipeline](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight/actions/workflows/ci.yml)
 ![Midnight Network](https://img.shields.io/badge/Midnight-Network-4f46e5?style=flat&logo=cardano)
 ![Compact Compiler](https://img.shields.io/badge/Compact-v0.5.1-7c3aed?style=flat)
 ![Hackathon Level](https://img.shields.io/badge/Level-Level_3_Submission-10b981?style=flat)
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
+**Live Web Application**: [https://leafy-chaja-e5b9d4.netlify.app/](https://leafy-chaja-e5b9d4.netlify.app/)  
 **Category**: Confidential Credentials (Level 3 Master Submission)  
 **Blockchain Platform**: Midnight Network (Zero-Knowledge Smart Contracts)  
 **Contract Language**: Compact `0.5.1` (Compiler `0.31.1`)  
@@ -18,14 +20,33 @@
 
 **Private Employee Access Card (CyberAccess ZK)** is a privacy-preserving enterprise access control dApp built on the **Midnight Network**. It enables employees to prove facility zone access rights via Zero-Knowledge (ZK) credentials while keeping personal identities, badge secrets, clearance levels, and department data 100% private.
 
-For full project motivation, threat model, and architecture, see [PROPOSAL.md](PROPOSAL.md).
+For full project motivation, threat model, and technical proposal, see [PROPOSAL.md](PROPOSAL.md).  
+For deployment configuration and Netlify/GitHub instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+---
+
+## Status Architecture: Website Status vs. Smart Contract Status
+
+The application explicitly decouples **Website Hosting Status** from **Midnight Smart Contract Status**:
+
+### 1. Website Status: **Successfully Deployed (Live)**
+- **URL**: [https://leafy-chaja-e5b9d4.netlify.app/](https://leafy-chaja-e5b9d4.netlify.app/)
+- **Hosting Platform**: Netlify Edge CDN (Production)
+- **SPA Routing**: Handled via `frontend/public/_redirects` (`/* /index.html 200`) and `netlify.toml`.
+
+### 2. Smart Contract Status: **Environment Controlled**
+- **Deployed Contract**: `b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113`
+- **Network**: Midnight Devnet / Preprod Testnet
+- **Status Rules**:
+  - If contract address is configured: Displays `Contract Status: Deployed` along with contract diagnostics.
+  - If contract address is omitted: Displays `Contract Status: Contract Not Deployed Yet` and `Deployment Pending` badge.
 
 ---
 
 ## Screenshots & Platform Interface
 
 - **Landing Page (`/`)**: Enterprise SaaS marketing portal with 4-step workflow, features grid, use cases, and privacy comparison cards.
-- **Employee Dashboard (`/dashboard`)**: Real-time stats, verifications count, contract diagnostics, and quick actions.
+- **Employee Dashboard (`/dashboard`)**: Real-time stats, verifications count, contract diagnostics, and website deployment status cards.
 - **Access Verification Wizard (`/verify`)**: 5-step interactive ZK proof wizard with live step execution indicators.
 - **Credential Vault (`/credential`)**: Card management with Export JSON and Revoke capabilities without exposing private witness keys.
 - **Facility Zones (`/zones`)**: Zone policy inspector for Zones A through E with clearance floor rules.
@@ -87,12 +108,18 @@ export circuit verifyAccess(
 
 ---
 
-## Midnight Lace Wallet Integration
+## Repository Homepage Configuration Instructions
 
-The application integrates with the **Midnight Lace Wallet** browser extension:
-- Automatic detection of `window.midnight.lace` / `window.midnight.mnLace`
-- Displays warning banner if Lace Wallet extension is not installed
-- Supports Connect, Disconnect, Session Reconnection, Address Display, and Balance sync
+To display the live Netlify application link on your GitHub repository header:
+
+1. Go to your repository: [https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight).
+2. Click the **Gear Icon ⚙️** next to **About** on the right sidebar.
+3. Check the **Website** checkbox.
+4. Enter the live URL:
+   ```
+   https://leafy-chaja-e5b9d4.netlify.app/
+   ```
+5. Click **Save Changes**.
 
 ---
 
@@ -127,41 +154,11 @@ npm test
 # 6. Deploy contract to local undeployed devnet
 npm run setup -- --network undeployed
 
-# 7. Launch interactive CLI
-npm run cli
-
-# 8. Start multi-page React frontend
+# 7. Start multi-page React frontend
 cd frontend
 npm install
 npm run dev
 ```
-
----
-
-## CI/CD Pipeline
-
-The project uses **GitHub Actions** ([.github/workflows/ci.yml](.github/workflows/ci.yml)):
-1. Setup Node 22 & Install Compact Compiler
-2. **Compile Compact Contract** (`npm run compile`)
-3. **Run Unit Tests** (`npm test`)
-4. **Build & Type-Check Frontend** (`cd frontend && npm ci && npm run build`)
-
----
-
-## Preprod Network Status
-
-- **Preprod RPC Node**: `https://rpc.preprod.midnight.network`
-- **Preprod Indexer**: `https://indexer.preprod.midnight.network/api/v4/graphql`
-- **Preprod Wallet Address**: `mn_addr_preprod1kzer648kayc5vnfzhdg25psale9udx455ugqg42uqt4rj9nzwfvqpclnqa`
-- **Blocker Status**: During Preprod wallet sync, WebSocket connection drops (`wss://rpc.preprod.midnight.network/: 1000:: Normal Closure`) prevented full sync completion due to testnet indexer backlog. Wallet seed and funded address are preserved in `.midnight-state.json`. Per mentor guidance, local network deployment (`undeployed`) serves as the primary fully operational execution target.
-
----
-
-## Level 1, 2, and 3 Submission Checklist
-
-- [x] **Level 1 (New Moon)**: Custom Compact contract, public ledger state, private input witness, `disclose()` boundaries, Compact 0.31.1 compilation, managed artifacts, local deployment script, README setup & privacy breakdown.
-- [x] **Level 2 (Waxing Crescent)**: Modern multi-page React SPA, Lace Wallet connect/disconnect UI, wallet status detection banner, network & contract address env configuration, loading/success/error wizard states, public state monitor panel.
-- [x] **Level 3 (First Quarter)**: Maps to Confidential Credentials category, 6 passing Vitest unit tests, GitHub Actions CI workflow with contract compile, Privacy Model section, PROPOSAL.md artifact, production-polished executive light theme UI, and 14 structured git commits.
 
 ---
 

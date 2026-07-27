@@ -65,9 +65,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Actions: Network & Wallet */}
           <div className="nav-actions">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#dcfce7', color: '#15803d', padding: '0.25rem 0.6rem', borderRadius: '1rem', fontSize: '0.725rem', fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a', display: 'inline-block' }}></span>
+              Website Live
+            </div>
+
             <div className="network-pill">
               <Globe size={13} />
-              <span>{network.toUpperCase()}</span>
+              <span>{network}</span>
             </div>
 
             {isConnected ? (

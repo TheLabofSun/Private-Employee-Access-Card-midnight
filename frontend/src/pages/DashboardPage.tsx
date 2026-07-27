@@ -83,36 +83,73 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ ledgerState, netwo
 
       {/* Contract & Network Status Grid */}
       <div className="grid-2" style={{ marginBottom: '2rem' }}>
+        {/* Website & Netlify Production Status */}
         <div className="card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, marginBottom: '1rem' }}>
-            <Server size={18} color="var(--primary)" /> Contract & Network Diagnostics
+            <Server size={18} color="var(--emerald)" /> Website Deployment Status
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Active Network:</span>
-              <span style={{ fontWeight: 600, color: 'var(--primary)' }}>{network.toUpperCase()}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Indexer Status:</span>
-              <span style={{ fontWeight: 600, color: 'var(--emerald)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                <CheckCircle2 size={14} /> Healthy (Port 8088)
+              <span style={{ color: 'var(--text-muted)' }}>Website Status:</span>
+              <span className="badge-status badge-approved" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <CheckCircle2 size={12} /> Successfully Deployed (Live)
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Proof Server:</span>
-              <span style={{ fontWeight: 600, color: 'var(--emerald)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                <CheckCircle2 size={14} /> Healthy (Port 6300)
-              </span>
+              <span style={{ color: 'var(--text-muted)' }}>Hosting Platform:</span>
+              <span style={{ fontWeight: 600, color: 'var(--primary)' }}>Netlify Production Edge</span>
             </div>
             <div>
-              <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Deployed Contract:</span>
-              <code style={{ fontSize: '0.75rem', background: 'var(--bg-subtle)', padding: '0.4rem 0.6rem', borderRadius: '0.375rem', display: 'block', wordBreak: 'break-all' }}>
-                {ledgerState.contractAddress}
-              </code>
+              <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Live Web Application URL:</span>
+              <a
+                href="https://leafy-chaja-e5b9d4.netlify.app/"
+                target="_blank"
+                rel="noreferrer"
+                style={{ fontSize: '0.775rem', color: 'var(--primary)', fontWeight: 600, wordBreak: 'break-all' }}
+              >
+                https://leafy-chaja-e5b9d4.netlify.app/
+              </a>
             </div>
           </div>
         </div>
+
+        {/* Midnight Smart Contract Status */}
+        <div className="card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight 700, marginBottom: '1rem' }}>
+            <Activity size={18} color="var(--primary)" /> Smart Contract Status
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Contract Status:</span>
+              {ledgerState.contractAddress ? (
+                <span className="badge-status badge-approved" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <CheckCircle2 size={12} /> Deployed
+                </span>
+              ) : (
+                <span className="badge-status badge-denied">Contract Not Deployed Yet</span>
+              )}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-color)' }}>
+              <span style={{ color: 'var(--text-muted)' }}>Target Network:</span>
+              <span style={{ fontWeight: 600, color: 'var(--primary)' }}>{network}</span>
+            </div>
+            <div>
+              <span style={{ color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Contract Address:</span>
+              {ledgerState.contractAddress ? (
+                <code style={{ fontSize: '0.75rem', background: 'var(--bg-subtle)', padding: '0.4rem 0.6rem', borderRadius: '0.375rem', display: 'block', wordBreak: 'break-all' }}>
+                  {ledgerState.contractAddress}
+                </code>
+              ) : (
+                <div style={{ fontSize: '0.8rem', color: 'var(--amber)', fontWeight: 600 }}>
+                  Deployment Pending (Configure VITE_CONTRACT_ADDRESS)
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
         {/* Quick Actions Panel */}
         <div className="card">

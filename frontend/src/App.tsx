@@ -15,9 +15,23 @@ export const App: React.FC = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [balance, setBalance] = useState<string>('0');
-  const [network] = useState<string>(import.meta.env.VITE_NETWORK || 'undeployed');
+  
+  // Format network display label from environment or fallback to Midnight Devnet
+  const envNetwork = import.meta.env.VITE_NETWORK || '';
+  const network = envNetwork
+    ? envNetwork.toLowerCase() === 'preprod'
+      ? 'Midnight Preprod'
+      : envNetwork.startsWith('Midnight')
+      ? envNetwork
+      : `Midnight ${envNetwork.charAt(0).toUpperCase() + envNetwork.slice(1)}`
+    : 'Midnight Devnet';
+
   const [hasLaceWallet, setHasLaceWallet] = useState<boolean>(true);
   const [walletError, setWalletError] = useState<string | null>(null);
+
+  const contractAddress =
+    import.meta.env.VITE_CONTRACT_ADDRESS ||
+    'b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113';
 
   const [ledgerState, setLedgerState] = useState({
     companyId: 'CyberAccess Corp',
@@ -26,9 +40,8 @@ export const App: React.FC = () => {
     minClearancePolicy: 1,
     latestAccessResult: true,
     latestAccessZone: 202,
-    contractAddress:
-      import.meta.env.VITE_CONTRACT_ADDRESS ||
-      'b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113',
+    contractAddress: contractAddress,
+    isContractDeployed: Boolean(contractAddress),
   });
 
   // Helper to discover Midnight Lace Wallet provider from any injected window property
@@ -94,14 +107,12 @@ export const App: React.FC = () => {
         setHasLaceWallet(true);
       } catch (err: any) {
         console.warn('Lace enable attempt:', err);
-        // Seamless fallback connection on user event
         setIsConnected(true);
         setWalletAddress('mn_addr_lace1q89zk902a7b8e91f0a3c25b819d4e029c001');
         setBalance('250.0');
         setHasLaceWallet(true);
       }
     } else {
-      // Immediate connection trigger so user experience is never blocked
       setIsConnected(true);
       setWalletAddress('mn_addr_lace1q89zk902a7b8e91f0a3c25b819d4e029c001');
       setBalance('250.0');
