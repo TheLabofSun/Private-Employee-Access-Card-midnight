@@ -116,7 +116,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ ledgerState, netwo
 
         {/* Midnight Smart Contract Status */}
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight 700, marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, marginBottom: '1rem' }}>
             <Activity size={18} color="var(--primary)" /> Smart Contract Status
           </div>
 
