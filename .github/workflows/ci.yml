@@ -1,0 +1,42 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build-test:
+    name: Compile Contract, Run Tests & Build Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install Compact Compiler
+        run: |
+          mkdir -p $HOME/.local/bin
+          curl -sSL https://builder.midnight.network/compact/install.sh | bash || true
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Root Dependencies
+        run: npm ci
+
+      - name: Compile Compact Smart Contract
+        run: npm run compile
+
+      - name: Run Unit Tests
+        run: npm test
+
+      - name: Install & Build Frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
