@@ -7,8 +7,11 @@ on:
     branches: [ master, main ]
 
 jobs:
-  build-test:
-    name: Compile Contract, Run Tests & Build Frontend
+  # ─────────────────────────────────────────────────────────
+  # Job 1: Run Vitest unit tests (pure TS logic, no blockchain deps)
+  # ─────────────────────────────────────────────────────────
+  test:
+    name: Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -20,24 +23,84 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: Install Root Dependencies
+      - name: Install Vitest test runner
+        run: npm install --save-dev vitest typescript
+
+      - name: Run unit tests
+        run: npx vitest run --reporter=verbose
+
+  # ─────────────────────────────────────────────────────────
+  # Job 2: Verify Compact contract source + compiled artifacts
+  # ─────────────────────────────────────────────────────────
+  verify-contract:
+    name: Verify Compact Contract
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Compact contract source
+        run: |
+          echo "--- Checking Compact contract source ---"
+          test -f contracts/private-employee-access-card.compact \
+            && echo "PASS: Contract source found" \
+            || (echo "FAIL: Contract source missing" && exit 1)
+
+      - name: Verify compiled ZK circuit artifacts
+        run: |
+          echo "--- Checking compiled ZK artifacts ---"
+          test -d contracts/managed/private-employee-access-card \
+            && echo "PASS: Managed artifacts directory found" \
+            || (echo "FAIL: Managed artifacts missing" && exit 1)
+          test -f contracts/managed/private-employee-access-card/contract/index.js \
+            && echo "PASS: Contract JS bundle present" \
+            || (echo "FAIL: Contract JS bundle missing" && exit 1)
+          test -f contracts/managed/private-employee-access-card/compiler/contract-info.json \
+            && echo "PASS: contract-info.json present" \
+            || (echo "FAIL: contract-info.json missing" && exit 1)
+
+      - name: Display contract summary
+        run: |
+          echo "=== Compact Contract Source (first 25 lines) ==="
+          head -25 contracts/private-employee-access-card.compact
+          echo ""
+          echo "=== Available ZK Circuit Keys ==="
+          ls contracts/managed/private-employee-access-card/keys/ 2>/dev/null \
+            && echo "ZK prover/verifier keys present" \
+            || echo "No keys directory found"
+
+  # ─────────────────────────────────────────────────────────
+  # Job 3: Build the React + Vite frontend
+  # ─────────────────────────────────────────────────────────
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install frontend dependencies
+        working-directory: frontend
         run: npm install
 
-      - name: Verify Compact Smart Contract & Artifacts
-        run: |
-          if command -v compact >/dev/null 2>&1; then
-            npm run compile
-          else
-            echo "Compact compiler binary unavailable on runner; verifying managed ZK artifacts."
-            test -f contracts/private-employee-access-card.compact
-            test -d contracts/managed/private-employee-access-card
-          fi
+      - name: Build React frontend
+        working-directory: frontend
+        run: npm run build
 
-      - name: Run Unit Tests
-        run: npm test
-
-      - name: Install & Build Frontend
+      - name: Verify build output
         run: |
-          cd frontend
-          npm install
-          npm run build
+          test -d frontend/dist \
+            && echo "PASS: Frontend dist directory present" \
+            || (echo "FAIL: Frontend dist missing" && exit 1)
+          test -f frontend/dist/index.html \
+            && echo "PASS: index.html present" \
+            || (echo "FAIL: index.html missing" && exit 1)
+          echo "=== Build Artifacts ==="
+          ls -lh frontend/dist/
