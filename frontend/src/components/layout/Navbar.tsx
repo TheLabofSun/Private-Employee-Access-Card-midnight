@@ -40,13 +40,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Brand Logo */}
           <Link to="/" className="brand-logo">
             <div className="brand-icon-box">
-              <ShieldCheck size={22} />
+              <ShieldCheck size={20} />
             </div>
-            <div>
-              <span>CyberAccess ZK</span>
-              <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1 }}>
+            <div className="brand-text-container">
+              <span className="brand-title">CyberAccess ZK</span>
+              <span className="brand-subtitle">
                 Midnight Confidential Credentials
-              </div>
+              </span>
             </div>
           </Link>
 
@@ -65,8 +65,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Actions: Network & Wallet */}
           <div className="nav-actions">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: '#dcfce7', color: '#15803d', padding: '0.25rem 0.6rem', borderRadius: '1rem', fontSize: '0.725rem', fontWeight: 600 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#16a34a', display: 'inline-block' }}></span>
+            <div className="status-live-pill">
+              <span className="status-dot"></span>
               Website Live
             </div>
 
@@ -85,12 +85,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {walletAddress.slice(0, 8)}... | {balance} tNIGHT
                   </div>
                 </div>
-                <button className="btn-secondary" onClick={onDisconnect} style={{ padding: '0.45rem 0.9rem', fontSize: '0.825rem' }}>
+                <button className="btn-secondary nav-btn" onClick={onDisconnect}>
                   Disconnect
                 </button>
               </div>
             ) : (
-              <button className="btn-primary" onClick={onConnect} style={{ padding: '0.45rem 1rem', fontSize: '0.85rem' }}>
+              <button className="btn-primary nav-btn" onClick={onConnect}>
                 <Wallet size={16} /> Connect Lace Wallet
               </button>
             )}
@@ -98,16 +98,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileOpen(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'var(--text-main)',
-                display: 'flex',
-                alignItems: 'center',
-              }}
-              className="lg-hide"
-
+              className="lg-hide menu-toggle-btn"
+              aria-label="Open Navigation Menu"
             >
               <Menu size={24} />
             </button>
