@@ -180,7 +180,6 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({ ledgerState, netwo
             </Link>
           </div>
         </div>
-      </div>
 
       {/* Activity Feed */}
       <div className="card">
