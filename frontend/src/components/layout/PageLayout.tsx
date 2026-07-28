@@ -1,33 +1,25 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { WalletState } from '../../types/wallet';
 
 interface PageLayoutProps {
   children: React.ReactNode;
-  isConnected: boolean;
-  walletAddress: string;
-  balance: string;
-  network: string;
+  walletState: WalletState;
   onConnect: () => void;
   onDisconnect: () => void;
 }
 
 export const PageLayout: React.FC<PageLayoutProps> = ({
   children,
-  isConnected,
-  walletAddress,
-  balance,
-  network,
+  walletState,
   onConnect,
   onDisconnect,
 }) => {
   return (
     <div className="app-wrapper">
       <Navbar
-        isConnected={isConnected}
-        walletAddress={walletAddress}
-        balance={balance}
-        network={network}
+        walletState={walletState}
         onConnect={onConnect}
         onDisconnect={onDisconnect}
       />

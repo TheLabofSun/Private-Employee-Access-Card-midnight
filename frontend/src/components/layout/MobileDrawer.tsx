@@ -1,14 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { X, ShieldCheck, Wallet } from 'lucide-react';
+import { X, ShieldCheck, Wallet, CheckCircle2, AlertCircle, AlertTriangle } from 'lucide-react';
+import { WalletState } from '../../types/wallet';
 
 interface MobileDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   navItems: Array<{ label: string; path: string }>;
-  isConnected: boolean;
-  walletAddress: string;
-  balance: string;
+  walletState: WalletState;
   onConnect: () => void;
   onDisconnect: () => void;
 }
@@ -17,9 +16,7 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
   isOpen,
   onClose,
   navItems,
-  isConnected,
-  walletAddress,
-  balance,
+  walletState,
   onConnect,
   onDisconnect,
 }) => {
@@ -56,10 +53,43 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
         </div>
 
         <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--border-color)' }}>
-          {isConnected ? (
+          {walletState.error && !walletState.connected && (
+            <div
+              style={{
+                background: walletState.error.code === 'LOCKED' ? '#fffbe6' : '#fff1f0',
+                border: `1px solid ${walletState.error.code === 'LOCKED' ? '#ffe58f' : '#ffa39e'}`,
+                padding: '0.75rem',
+                borderRadius: '0.5rem',
+                marginBottom: '1rem',
+                fontSize: '0.8rem',
+                color: walletState.error.code === 'LOCKED' ? '#d48806' : '#cf1322',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              {walletState.error.code === 'LOCKED' ? (
+                <AlertTriangle size={16} color="#d48806" />
+              ) : (
+                <AlertCircle size={16} color="#cf1322" />
+              )}
+              <div>
+                <div>{walletState.error.title}</div>
+                <div style={{ fontWeight: 400, fontSize: '0.75rem', marginTop: 2 }}>
+                  {walletState.error.message}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {walletState.connected && walletState.address ? (
             <div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                Wallet: {walletAddress.slice(0, 10)}... ({balance} tNIGHT)
+              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--emerald)', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: 4 }}>
+                <CheckCircle2 size={14} color="var(--emerald)" /> 🟢 Connected
+              </div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'monospace', marginBottom: '1rem', wordBreak: 'break-all' }}>
+                {walletState.address}
               </div>
               <button
                 className="btn-secondary"
@@ -80,8 +110,9 @@ export const MobileDrawer: React.FC<MobileDrawerProps> = ({
                 onClose();
               }}
               style={{ width: '100%' }}
+              disabled={walletState.connecting}
             >
-              <Wallet size={16} /> Connect Lace Wallet
+              <Wallet size={16} /> {walletState.connecting ? 'Connecting...' : 'Connect Lace Wallet'}
             </button>
           )}
         </div>

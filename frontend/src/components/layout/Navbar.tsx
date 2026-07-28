@@ -1,22 +1,17 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { ShieldCheck, Wallet, Globe, Menu, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Wallet, Globe, Menu, CheckCircle2, AlertCircle, AlertTriangle } from 'lucide-react';
 import { MobileDrawer } from './MobileDrawer';
+import { WalletState } from '../../types/wallet';
 
 interface NavbarProps {
-  isConnected: boolean;
-  walletAddress: string;
-  balance: string;
-  network: string;
+  walletState: WalletState;
   onConnect: () => void;
   onDisconnect: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  isConnected,
-  walletAddress,
-  balance,
-  network,
+  walletState,
   onConnect,
   onDisconnect,
 }) => {
@@ -32,6 +27,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'Privacy', path: '/privacy' },
     { label: 'About', path: '/about' },
   ];
+
+  const networkLabel = walletState.network || 'Midnight Preprod';
 
   return (
     <>
@@ -72,17 +69,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <div className="network-pill">
               <Globe size={13} />
-              <span>{network}</span>
+              <span>{networkLabel}</span>
             </div>
 
-            {isConnected ? (
+            {walletState.connected && walletState.address ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div style={{ textAlign: 'right', display: 'none', minWidth: '100px' }} className="sm-show">
-                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--emerald)' }}>
-                    <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 4 }} /> Connected
+                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--emerald)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <CheckCircle2 size={13} color="var(--emerald)" /> 🟢 Connected
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                    {walletAddress.slice(0, 8)}... | {balance} tNIGHT
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                    {walletState.address.slice(0, 14)}...{walletState.address.slice(-6)}
                   </div>
                 </div>
                 <button className="btn-secondary nav-btn" onClick={onDisconnect}>
@@ -90,8 +87,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </div>
             ) : (
-              <button className="btn-primary nav-btn" onClick={onConnect}>
-                <Wallet size={16} /> Connect Lace Wallet
+              <button
+                className="btn-primary nav-btn"
+                onClick={onConnect}
+                disabled={walletState.connecting}
+              >
+                <Wallet size={16} /> {walletState.connecting ? 'Connecting...' : 'Connect Lace Wallet'}
               </button>
             )}
 
@@ -105,6 +106,34 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Failure State Banner / Notification */}
+        {walletState.error && !walletState.connected && (
+          <div
+            style={{
+              background: walletState.error.code === 'LOCKED' ? '#fffbe6' : '#fff1f0',
+              borderTop: `1px solid ${walletState.error.code === 'LOCKED' ? '#ffe58f' : '#ffa39e'}`,
+              padding: '0.5rem 1rem',
+              fontSize: '0.825rem',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              color: walletState.error.code === 'LOCKED' ? '#d48806' : '#cf1322',
+              fontWeight: 600,
+            }}
+          >
+            {walletState.error.code === 'LOCKED' ? (
+              <AlertTriangle size={16} color="#d48806" />
+            ) : (
+              <AlertCircle size={16} color="#cf1322" />
+            )}
+            <span>
+              <strong>{walletState.error.title}:</strong> {walletState.error.message}
+            </span>
+          </div>
+        )}
       </header>
 
       {/* Mobile Drawer Navigation */}
@@ -112,9 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         isOpen={isMobileOpen}
         onClose={() => setIsMobileOpen(false)}
         navItems={navItems}
-        isConnected={isConnected}
-        walletAddress={walletAddress}
-        balance={balance}
+        walletState={walletState}
         onConnect={onConnect}
         onDisconnect={onDisconnect}
       />

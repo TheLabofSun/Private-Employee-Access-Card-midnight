@@ -1,20 +1,15 @@
 import React from 'react';
 import { ShieldCheck, Wallet, Globe, CheckCircle2 } from 'lucide-react';
+import { WalletState } from '../types/wallet';
 
 interface NavbarProps {
-  isConnected: boolean;
-  walletAddress: string;
-  balance: string;
-  network: string;
+  walletState: WalletState;
   onConnect: () => void;
   onDisconnect: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  isConnected,
-  walletAddress,
-  balance,
-  network,
+  walletState,
   onConnect,
   onDisconnect,
 }) => {
@@ -33,17 +28,17 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="wallet-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', padding: '0.4rem 0.75rem', borderRadius: '0.5rem', fontSize: '0.8rem' }}>
           <Globe size={16} color="var(--accent-cyan)" />
-          <span style={{ fontWeight: 600, color: 'var(--accent-cyan)' }}>{network.toUpperCase()}</span>
+          <span style={{ fontWeight: 600, color: 'var(--accent-cyan)' }}>{walletState.network || 'MIDNIGHT PREPROD'}</span>
         </div>
 
-        {isConnected ? (
+        {walletState.connected && walletState.address ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <CheckCircle2 size={14} /> Connected
+                <CheckCircle2 size={14} /> 🟢 Connected
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                {walletAddress.slice(0, 10)}...{walletAddress.slice(-6)} | {balance} tNIGHT
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
+                {walletState.address.slice(0, 10)}...{walletState.address.slice(-6)}
               </div>
             </div>
             <button className="btn-secondary" onClick={onDisconnect}>
@@ -51,8 +46,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
         ) : (
-          <button className="btn-primary" onClick={onConnect}>
-            <Wallet size={18} /> Connect Lace Wallet
+          <button className="btn-primary" onClick={onConnect} disabled={walletState.connecting}>
+            <Wallet size={18} /> {walletState.connecting ? 'Connecting...' : 'Connect Lace Wallet'}
           </button>
         )}
       </div>
