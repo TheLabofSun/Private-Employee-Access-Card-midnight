@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { ShieldCheck, Wallet, Globe, Menu, CheckCircle2, AlertCircle, AlertTriangle } from 'lucide-react';
 import { MobileDrawer } from './MobileDrawer';
@@ -17,6 +17,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  useEffect(() => {
+    if (walletState.connected && walletState.address) {
+      console.log('[Wallet] Rendering address', walletState.address);
+    }
+  }, [walletState.connected, walletState.address]);
+
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Dashboard', path: '/dashboard' },
@@ -28,7 +34,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'About', path: '/about' },
   ];
 
-  const networkLabel = walletState.network || 'Midnight Preprod';
+  const networkDisplay =
+    walletState.network === 'preprod'
+      ? 'Preprod'
+      : walletState.network || 'Preprod';
 
   return (
     <>
@@ -69,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <div className="network-pill">
               <Globe size={13} />
-              <span>{networkLabel}</span>
+              <span>Network: {networkDisplay}</span>
             </div>
 
             {walletState.connected && walletState.address ? (
@@ -78,8 +87,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--emerald)', display: 'flex', alignItems: 'center', gap: 4 }}>
                     <CheckCircle2 size={13} color="var(--emerald)" /> 🟢 Connected
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                    {walletState.address.slice(0, 14)}...{walletState.address.slice(-6)}
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace' }} title={walletState.address}>
+                    Wallet Address: {walletState.address.slice(0, 14)}...{walletState.address.slice(-6)}
                   </div>
                 </div>
                 <button className="btn-secondary nav-btn" onClick={onDisconnect}>
@@ -107,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Failure State Banner / Notification */}
+        {/* Failure State Notification Banners */}
         {walletState.error && !walletState.connected && (
           <div
             style={{

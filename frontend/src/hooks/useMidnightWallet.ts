@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { WalletState, WalletErrorInfo, isValidMidnightAddress } from '../types/wallet';
 
 const INITIAL_WALLET_STATE: WalletState = {
@@ -12,19 +12,11 @@ const INITIAL_WALLET_STATE: WalletState = {
 export const useMidnightWallet = () => {
   const [walletState, setWalletState] = useState<WalletState>(INITIAL_WALLET_STATE);
 
-  // Detect Lace provider from window.midnight
   const getProvider = useCallback(() => {
     const win = window as any;
     if (!win.midnight) return null;
-
-    // Standard primary check: Object.values(window.midnight ?? {})[0]
     const firstProvider = Object.values(win.midnight ?? {})[0] as any;
-    if (firstProvider) return firstProvider;
-
-    // Fallback checks
-    if (win.midnight.lace) return win.midnight.lace;
-    if (win.midnight.mnLace) return win.midnight.mnLace;
-    return null;
+    return firstProvider || win.midnight?.lace || win.midnight?.mnLace || null;
   }, []);
 
   const connect = useCallback(async () => {
@@ -36,7 +28,7 @@ export const useMidnightWallet = () => {
 
     const provider = getProvider();
 
-    // STATE 1: window.midnight undefined or provider missing
+    // Provider missing check
     if (!provider) {
       const error: WalletErrorInfo = {
         code: 'NOT_FOUND',
@@ -53,12 +45,11 @@ export const useMidnightWallet = () => {
       return;
     }
 
-    console.log('[Wallet] Provider detected');
-    console.log('[Wallet] Connection started');
+    console.log('[Wallet] Provider found');
 
     let api: any = null;
 
-    // STEP 2: Connection attempt
+    // Connect to provider
     try {
       if (typeof provider.connect === 'function') {
         api = await provider.connect('preprod');
@@ -67,12 +58,12 @@ export const useMidnightWallet = () => {
       } else {
         api = provider;
       }
-      console.log('[Wallet] Connection approved');
+      console.log('[Wallet] Connection successful');
     } catch (err: any) {
       const errMsg = err?.message || String(err);
       const errName = err?.name || '';
 
-      // STATE 2: RemoteApiShutdownError
+      // RemoteApiShutdownError / Session Expired
       if (
         errName === 'RemoteApiShutdownError' ||
         errMsg.includes('RemoteApiShutdownError') ||
@@ -95,7 +86,7 @@ export const useMidnightWallet = () => {
         return;
       }
 
-      // STATE 3: Access to wallet api denied
+      // Connection Rejected
       if (
         errMsg.includes('Access to wallet api denied') ||
         errMsg.includes('denied') ||
@@ -118,7 +109,6 @@ export const useMidnightWallet = () => {
         return;
       }
 
-      // Fallback unknown connection error
       const error: WalletErrorInfo = {
         code: 'UNKNOWN',
         title: '🔴 Connection Failed',
@@ -134,27 +124,27 @@ export const useMidnightWallet = () => {
       return;
     }
 
-    // STEP 3: Address retrieval
-    console.log('[Wallet] Address retrieval started');
-    let addressCandidate: string | null = null;
+    // Address Retrieval
+    let address: string | null = null;
 
     try {
       if (api && typeof api.getUnshieldedAddress === 'function') {
         const result = await api.getUnshieldedAddress();
-        addressCandidate =
+        // Handle string vs object return types ({ unshieldedAddress: 'mn_addr_...' } vs 'mn_addr_...')
+        address =
           typeof result === 'string'
             ? result
-            : result?.unshieldedAddress || result?.address || null;
+            : result?.unshieldedAddress ?? (typeof result?.address === 'string' ? result.address : null);
       } else if (api && typeof api.state === 'function') {
         const state = await api.state();
-        addressCandidate = state?.unshieldedAddress || state?.address || null;
+        address = state?.unshieldedAddress ?? state?.address ?? null;
       } else if (api?.unshieldedAddress || api?.address) {
-        addressCandidate = api.unshieldedAddress || api.address;
+        address = api.unshieldedAddress ?? api.address ?? null;
       }
     } catch (err: any) {
       const errMsg = err?.message || String(err);
 
-      // STATE 4: Wallet is locked
+      // Wallet Locked
       if (
         errMsg.includes('Wallet is locked') ||
         errMsg.includes('locked') ||
@@ -166,7 +156,6 @@ export const useMidnightWallet = () => {
           title: '🟠 Wallet Locked',
           message: 'Unlock Lace Wallet and reconnect.',
         };
-        // Do NOT show Connected. Do NOT show wallet address.
         setWalletState({
           connected: false,
           connecting: false,
@@ -177,7 +166,7 @@ export const useMidnightWallet = () => {
         return;
       }
 
-      // Address retrieval error
+      // Address Unavailable
       const error: WalletErrorInfo = {
         code: 'ADDRESS_UNAVAILABLE',
         title: '🔴 Address Unavailable',
@@ -195,19 +184,18 @@ export const useMidnightWallet = () => {
 
     console.log('[Wallet] Address retrieved');
 
-    // STEP 4 & VALIDATION RULE CHECK
-    // Address must satisfy: typeof address === "string" && address.startsWith("mn_addr_") && address.length > 20
-    if (isValidMidnightAddress(addressCandidate)) {
-      console.log('[Wallet] Connected successfully');
+    // Validation Rule Check
+    if (isValidMidnightAddress(address)) {
+      console.log('[Wallet] Address stored in state');
       setWalletState({
         connected: true,
         connecting: false,
-        address: addressCandidate,
-        network: 'Midnight Preprod',
+        address: address,
+        network: 'preprod',
         error: null,
       });
     } else {
-      // STATE 5: Address missing / invalid
+      // Address Missing / Invalid
       const error: WalletErrorInfo = {
         code: 'ADDRESS_UNAVAILABLE',
         title: '🔴 Address Unavailable',
