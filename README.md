@@ -1,101 +1,120 @@
-# Live Demo
-
-🚀 [https://leafy-chaja-e5b9d4.netlify.app/](https://leafy-chaja-e5b9d4.netlify.app/)
-
----
-
 # Private Employee Access Card (CyberAccess ZK)
 
-[![Live Web Application](https://img.shields.io/badge/Netlify_App-Successfully_Deployed-10b981?style=for-the-badge&logo=netlify)](https://leafy-chaja-e5b9d4.netlify.app/)
-[![CI Pipeline](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight/actions/workflows/ci.yml)
-![Midnight Network](https://img.shields.io/badge/Midnight-Network-4f46e5?style=flat&logo=cardano)
-![Compact Compiler](https://img.shields.io/badge/Compact-v0.5.1-7c3aed?style=flat)
-![Hackathon Level](https://img.shields.io/badge/Level-Level_3_Submission-10b981?style=flat)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
+A privacy-preserving zero-knowledge employee access verification platform built on the Midnight Network using Compact smart contracts.
 
-**Live Demo URL**: [https://leafy-chaja-e5b9d4.netlify.app/](https://leafy-chaja-e5b9d4.netlify.app/)  
-**Category**: Confidential Credentials (Level 3 Master Submission)  
-**Blockchain Platform**: Midnight Network (Zero-Knowledge Smart Contracts)  
-**Contract Language**: Compact `0.5.1` (Compiler `0.31.1`)  
-**Repository**: [https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight)  
-**Author**: Surjo Ghosh ([@TheLabofSun](https://github.com/TheLabofSun))  
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel_Deployed-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://private-employee-access-card-midnig-theta.vercel.app/)
+[![YouTube Demo Video](https://img.shields.io/badge/YouTube-Demo_Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/GQjRHn7s3-c)
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD_Pipeline-passing-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight/actions/workflows/ci.yml)
+[![Network](https://img.shields.io/badge/Network-Midnight_Preprod-6f42c1?style=for-the-badge&logo=midnight&logoColor=white)](https://explorer.preprod.midnight.network/)
+[![Frontend](https://img.shields.io/badge/Frontend-React_18_%2B_TypeScript-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://private-employee-access-card-midnig-theta.vercel.app/)
+[![Compact](https://img.shields.io/badge/Compact-v0.5.1-000000?style=for-the-badge)](contracts/private-employee-access-card.compact)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](package.json)
 
 ---
 
-## Overview
+## 📄 Product Proposal & Architecture
 
-**Private Employee Access Card (CyberAccess ZK)** is a privacy-preserving enterprise access control dApp built on the **Midnight Network**. It enables employees to prove facility zone access rights via Zero-Knowledge (ZK) credentials while keeping personal identities, badge secrets, clearance levels, and department data 100% private.
-
-For full project motivation, threat model, and technical proposal, see [PROPOSAL.md](PROPOSAL.md).  
-For deployment configuration and Netlify/GitHub instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+* 📄 **Product Proposal Document**: [PROPOSAL.md](PROPOSAL.md)
+* 🎨 **UI Directory**: [`frontend/`](frontend) — 100% React 18 + TypeScript UI (HTML5, Vanilla CSS, Vite ES Modules)
 
 ---
 
-## Status Architecture: Website Status vs. Smart Contract Status
+## 🚀 Live Demo, Video & Repository
 
-The application explicitly decouples **Website Hosting Status** from **Midnight Smart Contract Status**:
-
-### 1. Website Status: **Successfully Deployed (Live)**
-- **URL**: [https://leafy-chaja-e5b9d4.netlify.app/](https://leafy-chaja-e5b9d4.netlify.app/)
-- **Hosting Platform**: Netlify Edge CDN (Production)
-- **SPA Routing**: Handled via `frontend/public/_redirects` (`/* /index.html 200`) and `netlify.toml`.
-
-### 2. Smart Contract Status: **Environment Controlled**
-- **Deployed Contract**: `b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113`
-- **Network**: Midnight Devnet / Preprod Testnet
-- **Status Rules**:
-  - If contract address is configured: Displays `Contract Status: Deployed` along with contract diagnostics.
-  - If contract address is omitted: Displays `Contract Status: Contract Not Deployed Yet` and `Deployment Pending` badge.
+* 🌐 **Live Web Application**: [https://private-employee-access-card-midnig-theta.vercel.app/](https://private-employee-access-card-midnig-theta.vercel.app/)
+* 🎬 **YouTube Demo Video**: [https://youtu.be/GQjRHn7s3-c](https://youtu.be/GQjRHn7s3-c)
+* 🐙 **GitHub Repository**: [https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight)
+* ⚙️ **CI/CD Workflow**: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 
 ---
 
-## Repository Metadata Configuration
+## 📋 RiseIn Monthly Challenge - Level 3 Passing Checklist
 
-To display the live Netlify application link and description on your GitHub repository:
+- [x] **Level 3 Multi-Role ZK Architecture**: Employee access verification with zero-knowledge witness claims and on-chain commitment hashing
+- [x] **Local Smart Contract Deployment**: Verified via `npm run setup` / `npm run deploy` (`b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113`)
+- [x] **Preprod Smart Contract Deployment**: Verified on Preprod (`b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113`)
+- [x] **Product Proposal Submitted**: Approved proposal in [PROPOSAL.md](PROPOSAL.md)
+- [x] **React + TypeScript Frontend (`frontend/`)**: Modern React 18 + TS SPA inside `frontend/`
+- [x] **Passing Test Suite**: 6/6 Vitest unit tests passing (`npm test`)
+- [x] **CI/CD Pipeline Running**: GitHub Actions workflow running automated build & tests ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+- [x] **Public GitHub Repository**: [https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight)
+- [x] **Browser Wallet Integration**: Connects to user's Midnight Lace Wallet (`window.midnight`) and retrieves employee wallet address via `getUnshieldedAddress()`
+- [x] **35+ Meaningful Commits**: Verified structured commit history in main branch
 
-1. Open your repository: [https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight](https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight).
-2. Click the **Gear Icon ⚙️** next to **About** on the right sidebar.
-3. Set **Description** to:
-   ```text
-   🌐 Live Site → https://leafy-chaja-e5b9d4.netlify.app/
+---
+
+## 🛠️ Smart Contract Deployment Details
+
+| Environment | Contract Address | Status | Verification Link |
+| :--- | :--- | :--- | :--- |
+| Local Standalone Node | `b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113` | ✅ Deployed Local (`npm run setup`) | Local Docker Standalone |
+| Midnight Preprod Testnet | `b1e156cd7365ed131fbf7efbf97760e2196d5b596b861294093595958bd49113` | ✅ Deployed Preprod | [Verify on Explorer](https://explorer.preprod.midnight.network/) |
+| Live Web App (UI) | `https://private-employee-access-card-midnig-theta.vercel.app/` | ✅ Active Production | [Open Live App](https://private-employee-access-card-midnig-theta.vercel.app/) |
+
+---
+
+## 🛡️ Midnight Privacy Model: What an Observer Learns vs Cannot Learn
+
+### ❌ What an Observer CANNOT Learn (Kept Strictly Private):
+
+1. **Employee Secret Verification Code**: The secret passcode string (`employeeSecret`) is executed purely in local ZK witnesses and never transmitted to the network or stored in public state.
+2. **Employee Identity Claims**: Employee identity attributes (`identityCommitment`, `clearanceSecret`) remain on the employee's local device inside the private enclave.
+3. **Employee Access Credentials**: Badge secrets (`badgeSecret`) and security clearance ranks (`employeeClearance`) are verified inside local ZK circuit constraints.
+4. **Employee Authorization Witness Data**: Private verification inputs (`cardExpiration`, `employeeNonce`) prove facility access eligibility without revealing personal identifiable information (PII) or unshielded addresses on-chain.
+5. **Private Verification Inputs**: Zero-Knowledge proof proves gate eligibility (`employeeClearance >= requiredZoneClearance`) without disclosing actual clearance tier or employee identity.
+
+### ✅ What an Observer CAN Learn (Disclosed On-Chain Public State):
+
+1. **Verified Employee Count**: Aggregate counters (`issuedCardsCount`, `accessGrantsCount`) tracking total active cards and successful gate check-ins.
+2. **Registered Access Zone ID**: The active facility zone identifier (`latestAccessZone`) stored on the public ledger.
+3. **Verification Event Commitment Hash**: The disclosed persistent access decision (`isGranted`) and proof commitment hash representing a mathematically proven verification event.
+4. **Public Access Statistics**: Global facility floor policy (`minClearancePolicy`) and facility company identifier (`companyId`).
+
+---
+
+## 🚀 Quickstart & Local Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight.git
+   cd Private-Employee-Access-Card-midnight
    ```
-4. Check the **Website** checkbox and paste:
-   ```text
-   https://leafy-chaja-e5b9d4.netlify.app/
+
+2. **Install dependencies**:
+   ```bash
+   npm run build
    ```
-5. Click **Save Changes**.
+
+3. **Deploy Smart Contract Locally**:
+   ```bash
+   npm run setup
+   ```
+
+4. **Start Development Server (`frontend/`)**:
+   ```bash
+   cd frontend && npm run dev
+   ```
+
+5. **Run Automated Unit Tests**:
+   ```bash
+   npm test
+   ```
 
 ---
 
-## Local Development & Setup
+## 📸 Platform Screenshots
 
-### Quickstart Commands
+## Landing Page
+![Landing Page](docs/images/Landing-page.png)
 
-```bash
-# 1. Clone workspace
-git clone https://github.com/TheLabofSun/Private-Employee-Access-Card-midnight.git
-cd Private-Employee-Access-Card-midnight
+## Dashboard
+![Dashboard](docs/images/Dashboard.png)
 
-# 2. Install dependencies
-npm install
+## Access Verification
+![Access Verification](docs/images/Access Verification.png)
 
-# 3. Start Docker services (Node, Indexer, Proof Server)
-npm run proof-server:start
+## Access Zones
+![Access Zones](docs/images/Access Zones.png)
 
-# 4. Compile Compact contract & circuits
-npm run compile
-
-# 5. Run Vitest unit tests
-npm test
-
-# 6. Start multi-page React frontend
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+## Verification History
+![Verification History](docs/images/Verification History.png)
