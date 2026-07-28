@@ -111,10 +111,10 @@ A privacy-preserving zero-knowledge employee access verification platform built 
 ![Dashboard](docs/images/Dashboard.png)
 
 ## Access Verification
-![Access Verification](docs/images/Access Verification.png)
+![Access Verification](docs/images/Access-Verification.png)
 
 ## Access Zones
-![Access Zones](docs/images/Access Zones.png)
+![Access Zones](docs/images/Access-Zones.png)
 
 ## Verification History
-![Verification History](docs/images/Verification History.png)
+![Verification History](docs/images/Verification-History.png)
